@@ -8,6 +8,43 @@ const caseStudies: Record<string, {
   overview: string;
   sections: { heading: string; body: string }[];
 }> = {
+  "agentic-development-program": {
+    title: "Agentic Development Program",
+    subtitle: "600+ people, three waves. Making agentic development real for designers, PMs, and everyone in between.",
+    tags: ["AI", "Enablement", "Culture"],
+    overview: `
+      Agentic coding tools didn't need another demo — they needed an on-ramp. With two co-leads,
+      I run the design track of a company-wide program that has now put over 600 people, including
+      about a hundred designers, through hands-on agentic development. Three waves in, it keeps
+      growing — and it's changed who gets to build at Yahoo.
+    `,
+    sections: [
+      {
+        heading: "The Problem",
+        body: `Agentic tools were everywhere and adoption was nowhere. The people with the most to gain —
+        designers, PMs, non-technical builders — were the least equipped to start. Repos assumed engineering
+        context, documentation assumed fluency, and the gap between "this is the future" and "I can actually
+        do this" was widening. Enthusiasm without an on-ramp curdles into skepticism.`,
+      },
+      {
+        heading: "The Work",
+        body: `The program evolved from teaching sessions into something much more hands-on: working directly
+        with nearly every squad at Yahoo to bring whole teams — PM, design, and engineering together — to a level
+        of agentic maturity where their repos can accept contributions from technical and non-technical folks
+        alike. A designer or PM can open a real codebase and ship real work with an agent alongside them. Just as
+        important as the technical scaffolding was the human side — empathetic, one-on-one relationship building
+        with people who'd been told for years that code wasn't for them. I lead the design track with two
+        co-leads, shaping the curriculum around how designers actually think and work.`,
+      },
+      {
+        heading: "The Outcome",
+        body: `Three waves and counting. Over 600 people through the program, roughly a hundred of them designers.
+        The program keeps growing and evolving, and it's shifted my own role too — I now sit alongside design
+        leadership, weighing in on company-wide design decisions from the vantage point of where the practice
+        is heading.`,
+      },
+    ],
+  },
   "yahoo-for-creators": {
     title: "Yahoo for Creators",
     subtitle: "0-to-1 creator platform. From blank whiteboard to board-level buy-in.",

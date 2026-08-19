@@ -2,6 +2,12 @@ import Link from "next/link";
 
 const caseStudies = [
   {
+    slug: "agentic-development-program",
+    title: "Agentic Development Program",
+    description: "600+ people, three waves. Making agentic development real for designers, PMs, and everyone in between.",
+    tags: ["AI", "Enablement", "Culture"],
+  },
+  {
     slug: "yahoo-for-creators",
     title: "Yahoo for Creators",
     description: "0-to-1 creator platform. Stakeholder alignment from zero to board-level buy-in.",
@@ -119,6 +125,9 @@ export default function Home() {
           I've spent my career building design practices, not just products. At Yahoo, that's meant
           leading teams across consumer apps, internal platforms, and AI-era products — always with
           the conviction that the most important design work happens in the room, not in the file.
+          Today I sit alongside design leadership as a peer without a team of my own — weighing in
+          on company-wide design decisions and leading the design track of Yahoo's Agentic
+          Development Program.
         </p>
       </section>
 
