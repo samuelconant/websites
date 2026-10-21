@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+/* "The Memo" — warm paper, ink, and a single oxblood accent. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #f7f4ee;
+  --ink: #1c1a17;
+  --ink-muted: #5c574f; /* 6.5:1 on paper */
+  --ink-faint: #8a8378; /* large text / decorative only (3.4:1) */
+  --rule: #e3ddd2;
+  --accent: #9e2b25; /* oxblood, 6.8:1 */
+  --accent-ink: #f7f4ee; /* text on accent fills */
+  --focus: #9e2b25;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #141311;
+    --ink: #ece7de;
+    --ink-muted: #a39d92; /* 6.9:1 */
+    --ink-faint: #7a746a; /* large/decorative only */
+    --rule: #2c2a26;
+    --accent: #e0675c; /* 5.5:1 */
+    --accent-ink: #141311;
+    --focus: #e0675c;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-instrument), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --text-display: clamp(2.75rem, 6vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.02em;
+  --text-h1: clamp(2.25rem, 4.5vw, 3.5rem);
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.015em;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.25;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+  --text-lede: 1.25rem;
+  --text-lede--line-height: 1.55;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.08em;
+  --text-numeral: clamp(3rem, 7vw, 5.5rem);
+  --text-numeral--line-height: 1;
+  --text-numeral--letter-spacing: -0.03em;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Accent underline that grows in from the left on hover/focus */
+.memo-link {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 250ms ease, color 250ms ease;
+}
+.memo-link:hover,
+.memo-link:focus-visible,
+.group:hover .memo-link {
+  background-size: 100% 1px;
+}
+
+/* First-view reveal: 200ms fade + 4px rise (see components/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
