@@ -3,18 +3,140 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Colour. Contrast on paper (#fff): ink 17.7:1, ink-soft 7.7:1,
+     muted 4.8:1, accent-ink 5.1:1. Mustard (#d3ab45) is 2.2:1 on paper,
+     so it is for marks, rules and fills only; mustard text uses accent-ink. */
+  --color-ink: #18181b;
+  --color-ink-soft: #52525b;
+  --color-muted: #71717a;
+  --color-paper: #ffffff;
+  --color-wash: #f4f4f5;
+  --color-rule: #e4e4e7;
   --color-accent: #d3ab45;
+  --color-accent-ink: #8a6a14;
+
+  /* Grid: 4 cols / 16px gutter / 20px margin on mobile, 8 / 24 / 32 at sm,
+     12 / 24 / 48 at lg. 4px baseline; layout spacing snaps to
+     8 · 16 · 24 · 32 · 48 · 64 · 96 · 128. */
+  --spacing-gutter: 1.5rem;
+  --spacing-gutter-mobile: 1rem;
+  --spacing-margin: 3rem;
+  --spacing-margin-sm: 2rem;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-page-top: 6rem;
+  --spacing-page-top-mobile: 4rem;
+  --container-page: 78rem; /* 1152px content + 2 × 48px margin */
+}
+
+/* Page container: one max width and one set of outer margins everywhere. */
+@utility page-container {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: var(--spacing-margin-mobile);
+  @media (width >= 40rem) {
+    padding-inline: var(--spacing-margin-sm);
+  }
+  @media (width >= 64rem) {
+    padding-inline: var(--spacing-margin);
+  }
+}
+
+/* The one column grid every page sits on: 4 / 8 / 12 columns. */
+@utility page-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--spacing-gutter-mobile);
+  @media (width >= 40rem) {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: var(--spacing-gutter);
+  }
+  @media (width >= 64rem) {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+/* One page-top value for every route. */
+@utility page-top {
+  padding-top: var(--spacing-page-top-mobile);
+  @media (width >= 64rem) {
+    padding-top: var(--spacing-page-top);
+  }
+}
+
+/* The single mono label style: 12/16, uppercase, wide tracking. */
+@utility mono-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 ::selection {
-  background: #d3ab45;
-  color: #18181b;
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 4px;
 }
 
 /* 32px radius with Apple-style continuous corners where supported */
 .art-corners {
   border-radius: 32px;
   corner-shape: squircle;
+}
+
+/* --- Stylized portrait: high-contrast black & white with a mustard duotone --- */
+.portrait-bw {
+  filter: grayscale(1) contrast(1.12) brightness(1.04);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .portrait-bw {
+    transition: filter 700ms ease;
+  }
+}
+/* Mustard tint pushed into the midtones for a screenprint feel */
+.portrait-duotone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-accent);
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+  pointer-events: none;
+}
+/* Film grain — feTurbulence baked into a data URI so no extra request */
+.portrait-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.14;
+  pointer-events: none;
+}
+/* Warm the print back toward life on hover, without leaving monochrome */
+.group:hover .portrait-bw {
+  filter: grayscale(0.82) contrast(1.14) brightness(1.05) sepia(0.12);
+}
+
+/* --- Reveal: content is visible by default (no JS, reduced motion).
+   Only when JS has run and motion is allowed does it start hidden. --- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal {
+    transition:
+      opacity 700ms ease-out,
+      transform 700ms ease-out;
+  }
+  html.js .reveal:not([data-shown]) {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
 }
 
 @keyframes marquee {
@@ -27,7 +149,10 @@
   animation: marquee 32s linear infinite;
 }
 
-footer:hover .animate-marquee {
+/* Paused on hover, on keyboard focus inside the footer, or by the toggle */
+footer:hover .animate-marquee,
+footer:focus-within .animate-marquee,
+footer[data-paused] .animate-marquee {
   animation-play-state: paused;
 }
 

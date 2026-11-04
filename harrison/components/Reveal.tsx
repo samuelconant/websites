@@ -2,7 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** Fades + slides children up when they enter the viewport. */
+/**
+ * Fades + slides children up when they enter the viewport.
+ * Visible by default: the hidden start state lives in globals.css and only
+ * applies when JS has run (`html.js`) and reduced motion is not requested.
+ */
 export default function Reveal({
   children,
   delay = 0,
@@ -16,12 +20,11 @@ export default function Reveal({
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
       setShown(true);
       return;
     }
-    const el = ref.current;
-    if (!el) return;
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -38,10 +41,9 @@ export default function Reveal({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out will-change-transform ${
-        shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      data-shown={shown ? "" : undefined}
+      className={`reveal ${className}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}
     </div>

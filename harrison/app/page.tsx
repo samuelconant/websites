@@ -4,32 +4,39 @@ import Reveal from "@/components/Reveal";
 import Parallax from "@/components/Parallax";
 
 /**
- * Exploded-grid placement per gallery position (12-col grid on sm+).
+ * Gallery placement per position, repeating every two rows.
+ * Mobile: 1 column. sm: 2 equal columns. lg: a mirrored 7/4 then 4/7 split
+ * on the 12-column grid. Only the narrow item is staggered (one row gap)
+ * and only it drifts, always in the same direction.
  * Class names stay literal so Tailwind picks them up.
  */
 const placements = [
   {
-    cell: "col-span-12 sm:col-span-7",
+    // Row A, wide, left
+    cell: "lg:col-span-7 lg:col-start-1",
     aspect: "aspect-[4/5]",
-    speed: 0.05,
+    narrow: false,
     delay: 0,
   },
   {
-    cell: "col-span-12 sm:col-span-4 sm:col-start-9 sm:mt-40",
+    // Row A, narrow, right
+    cell: "lg:col-span-4 lg:col-start-9 lg:mt-24",
     aspect: "aspect-square",
-    speed: -0.04,
+    narrow: true,
     delay: 100,
   },
   {
-    cell: "col-span-12 sm:col-span-5 sm:col-start-8 sm:-mt-24",
+    // Row B, narrow, left
+    cell: "lg:col-span-4 lg:col-start-1 lg:mt-24",
     aspect: "aspect-[3/4]",
-    speed: 0.07,
+    narrow: true,
     delay: 0,
   },
   {
-    cell: "col-span-12 sm:col-span-6 sm:col-start-2 sm:mt-20",
+    // Row B, wide, right
+    cell: "lg:col-span-7 lg:col-start-6",
     aspect: "aspect-[4/5]",
-    speed: -0.05,
+    narrow: false,
     delay: 100,
   },
 ];
@@ -38,7 +45,7 @@ export default function Home() {
   return (
     <main>
       {/* Hero — type is the image */}
-      <section className="max-w-6xl mx-auto px-6 pt-20 sm:pt-28 pb-16">
+      <section className="page-container page-top pb-16">
         <h1 className="uppercase font-semibold tracking-[-0.04em] leading-[0.85] text-[clamp(3.5rem,13vw,11rem)]">
           <Reveal>I draw</Reveal>
           <Reveal delay={100}>
@@ -47,13 +54,13 @@ export default function Home() {
         </h1>
 
         <Reveal delay={250}>
-          <div className="mt-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-            <p className="font-mono text-xs uppercase tracking-widest text-zinc-400">
+          <div className="page-grid mt-12 gap-y-6 items-baseline">
+            <p className="col-span-4 lg:col-span-4 mono-label text-muted">
               Portfolio — {new Date().getFullYear()}
               <br />
               Digital art / Procreate on iPad
             </p>
-            <p className="text-zinc-500 leading-relaxed max-w-sm sm:text-right">
+            <p className="col-span-4 lg:col-span-5 lg:col-start-8 text-ink-soft leading-relaxed">
               Every piece here leads with the time-lapse of how it was actually
               made — the early sketches, the wrong turns, the moment it started
               to work.
@@ -62,67 +69,61 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* Exploded gallery */}
-      <section className="max-w-6xl mx-auto px-6">
-        <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-widest text-zinc-400 border-t border-zinc-200 pt-5 mb-12">
+      {/* Gallery */}
+      <section className="page-container">
+        <div className="flex items-baseline justify-between mono-label text-muted border-t border-rule pt-4 mb-12">
           <p>Selected work</p>
           <p>({String(pieces.length).padStart(2, "0")})</p>
         </div>
 
-        <div className="grid grid-cols-12 gap-x-5 gap-y-20 sm:gap-y-8">
+        <div className="page-grid items-start gap-y-16 lg:gap-y-24">
           {pieces.map((piece, i) => {
             const p = placements[i % placements.length];
             const index = String(i + 1).padStart(2, "0");
-            return (
-              <div key={piece.slug} className={p.cell}>
-                <Parallax speed={p.speed}>
-                  <Reveal delay={p.delay}>
-                    <Link href={`/work/${piece.slug}`} className="group block">
+            const card = (
+              <Reveal delay={p.delay}>
+                <Link href={`/work/${piece.slug}`} className="group block">
+                  <div
+                    className={`art-corners relative ${p.aspect} overflow-hidden bg-wash ring-1 ring-ink/5`}
+                  >
+                    {piece.thumbnail ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={piece.thumbnail}
+                        alt={piece.title}
+                        loading={i > 3 ? "lazy" : undefined}
+                        className="absolute inset-0 w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out motion-safe:group-hover:scale-[1.04] motion-safe:group-focus-visible:scale-[1.04]"
+                      />
+                    ) : (
                       <div
-                        className={`art-corners relative ${p.aspect} overflow-hidden bg-zinc-100 ring-1 ring-black/5`}
-                      >
-                        {piece.thumbnail ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={piece.thumbnail}
-                            alt={piece.title}
-                            loading={i > 3 ? "lazy" : undefined}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                          />
-                        ) : (
-                          <div
-                            className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                            style={{
-                              background: `linear-gradient(${135 + i * 40}deg, ${piece.tone[0]}, ${piece.tone[1]})`,
-                            }}
-                          />
-                        )}
+                        className="absolute inset-0 motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out motion-safe:group-hover:scale-[1.04] motion-safe:group-focus-visible:scale-[1.04]"
+                        style={{
+                          background: `linear-gradient(${135 + i * 40}deg, ${piece.tone[0]}, ${piece.tone[1]})`,
+                        }}
+                      />
+                    )}
 
-                        {/* Oversized index, revealed on hover */}
-                        <span className="absolute bottom-2 right-4 font-semibold tracking-tighter text-[clamp(3rem,6vw,5rem)] leading-none text-zinc-950/0 group-hover:text-zinc-950/80 transition-colors duration-300">
-                          {index}
-                        </span>
+                    {piece.videoUrl && (
+                      <span className="absolute top-4 left-4 mono-label bg-ink text-paper px-2 py-1">
+                        ▶ Process
+                      </span>
+                    )}
+                  </div>
 
-                        {piece.videoUrl && (
-                          <span className="absolute top-3 left-3 font-mono text-[10px] uppercase tracking-widest bg-zinc-950 text-white px-2 py-1">
-                            ▶ Process
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Swiss caption row */}
-                      <div className="mt-3 flex items-baseline gap-3 font-mono text-xs uppercase tracking-widest">
-                        <span className="text-accent">{index}</span>
-                        <span className="text-zinc-950 group-hover:text-accent transition-colors">
-                          {piece.title}
-                        </span>
-                        <span className="ml-auto text-zinc-400">
-                          {piece.year}
-                        </span>
-                      </div>
-                    </Link>
-                  </Reveal>
-                </Parallax>
+                  {/* Swiss caption row — the index lives here, off the art */}
+                  <div className="mt-3 flex items-baseline gap-3 mono-label">
+                    <span className="text-accent-ink">{index}</span>
+                    <span className="text-ink group-hover:text-accent-ink group-focus-visible:text-accent-ink transition-colors">
+                      {piece.title}
+                    </span>
+                    <span className="ml-auto text-muted">{piece.year}</span>
+                  </div>
+                </Link>
+              </Reveal>
+            );
+            return (
+              <div key={piece.slug} className={`col-span-4 ${p.cell}`}>
+                {p.narrow ? <Parallax speed={0.03} media="(min-width: 64rem)">{card}</Parallax> : card}
               </div>
             );
           })}

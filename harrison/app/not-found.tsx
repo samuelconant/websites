@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="max-w-6xl mx-auto px-6 pt-28">
+    <main className="page-container page-top">
       <h1 className="uppercase font-semibold tracking-[-0.04em] leading-[0.85] text-[clamp(3rem,10vw,8rem)] mb-8">
         Nothing
         <br />
@@ -10,7 +10,7 @@ export default function NotFound() {
       </h1>
       <Link
         href="/"
-        className="font-mono text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-950 transition-colors"
+        className="mono-label text-muted hover:text-ink focus-visible:text-ink transition-colors"
       >
         ← Back to the work
       </Link>

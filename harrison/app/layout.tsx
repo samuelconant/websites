@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import TickerFooter from "@/components/TickerFooter";
+import InlineScript from "@/components/InlineScript";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,13 +33,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // The inline script below adds `js` before first paint
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-sans bg-white text-zinc-950">
-        <header className="border-b border-zinc-200">
-          <div className="max-w-6xl w-full mx-auto px-6 py-4 flex items-center justify-between font-mono text-xs uppercase tracking-widest">
+      <head>
+        {/* Marks JS as available so Reveal may hide content before it
+            animates in. Without JS everything stays visible. */}
+        <InlineScript html="document.documentElement.classList.add('js')" />
+      </head>
+      <body className="min-h-full flex flex-col font-sans bg-paper text-ink">
+        <header className="border-b border-rule">
+          <div className="page-container py-4 flex items-center justify-between mono-label">
             <Link
               href="/"
-              className="flex items-center gap-2 hover:text-accent transition-colors"
+              className="flex items-center gap-2 hover:text-accent-ink focus-visible:text-accent-ink transition-colors"
             >
               <span className="inline-block w-2 h-2 bg-accent" />
               Harrison Conant
@@ -46,13 +54,13 @@ export default function RootLayout({
             <nav className="flex gap-8">
               <Link
                 href="/"
-                className="text-zinc-500 hover:text-zinc-950 transition-colors"
+                className="text-muted hover:text-ink focus-visible:text-ink transition-colors"
               >
                 Work
               </Link>
               <Link
                 href="/about"
-                className="text-zinc-500 hover:text-zinc-950 transition-colors"
+                className="text-muted hover:text-ink focus-visible:text-ink transition-colors"
               >
                 About
               </Link>
@@ -60,7 +68,7 @@ export default function RootLayout({
           </div>
         </header>
 
-        <div className="flex-1 w-full pb-32">{children}</div>
+        <div className="flex-1 w-full pb-24">{children}</div>
 
         <TickerFooter />
       </body>
